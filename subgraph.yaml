@@ -1,0 +1,53 @@
+specVersion: 0.0.1
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: ProjectY
+    network: mumbai
+    source:
+      address: "0x63d878eBF4deCcC675c29e5606f0993749068614"
+      abi: ProjectY
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities:
+        - Bid
+        - BidSelected
+        - BidWithdrawn
+        - BiddingPeriodUpdated
+        - GracePeriodUpdated
+        - InstallmentPaid
+        - Liquidated
+        - OwnerUpdated
+        - PaymentWithdrawn
+        - Sell
+        - SellWithdrawn
+      abis:
+        - name: ProjectY
+          file: ./abis/ProjectY.json
+      eventHandlers:
+        - event: Bid(indexed address,indexed uint256,indexed uint256,uint64)
+          handler: handleBid
+        - event: BidSelected(uint256,uint256)
+          handler: handleBidSelected
+        - event: BidWithdrawn(uint256,uint256,uint256)
+          handler: handleBidWithdrawn
+        - event: BiddingPeriodUpdated(uint64,uint64)
+          handler: handleBiddingPeriodUpdated
+        - event: GracePeriodUpdated(uint64,uint64)
+          handler: handleGracePeriodUpdated
+        - event: InstallmentPaid(address,uint256,uint256,uint256)
+          handler: handleInstallmentPaid
+        - event: Liquidated(uint256,uint256,uint256,uint256)
+          handler: handleLiquidated
+        - event: OwnerUpdated(indexed address,indexed address)
+          handler: handleOwnerUpdated
+        - event: PaymentWithdrawn(uint256,uint256,uint256,uint256)
+          handler: handlePaymentWithdrawn
+        - event: Sell(indexed address,indexed address,uint256,indexed uint256,uint64)
+          handler: handleSell
+        - event: SellWithdrawn(address,uint256)
+          handler: handleSellWithdrawn
+      file: ./src/project-y.ts
