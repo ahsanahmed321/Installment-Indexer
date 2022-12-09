@@ -1,6 +1,6 @@
 specVersion: 0.0.4
 schema:
-  file: ./schema.graphql
+  file: schema.graphql
 dataSources:
   - kind: ethereum
     name: ProjectY
@@ -17,8 +17,8 @@ dataSources:
         - BidEntity
       abis:
         - name: ProjectY
-          file: ./abis/ProjectY.json
+          file: ProjectY\abis\ProjectY.json
       eventHandlers:
         - event: Bid(indexed address,indexed uint256,indexed uint256,uint64)
           handler: handleBid
-      file: ./src/project-y.ts
+      file: ProjectY\ProjectY.wasm

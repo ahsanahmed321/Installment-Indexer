@@ -1,43 +1,32 @@
-import { BigInt } from "@graphprotocol/graph-ts"
-import {
-  ProjectY,
-  Bid,
-  BidSelected,
-  BidWithdrawn,
-  BiddingPeriodUpdated,
-  GracePeriodUpdated,
-  InstallmentPaid,
-  Liquidated,
-  OwnerUpdated,
-  PaymentWithdrawn,
-  Sell,
-  SellWithdrawn
-} from "../generated/ProjectY/ProjectY"
-import { ExampleEntity } from "../generated/schema"
+import { Bid } from "../generated/ProjectY/ProjectY";
+import { BidEntity } from "../generated/schema";
+import { ProjectY } from "../generated/ProjectY/ProjectY";
 
 export function handleBid(event: Bid): void {
   // Entities can be loaded from the store using a string ID; this ID
   // needs to be unique across all entities of the same type
-  let entity = ExampleEntity.load(event.transaction.from.toHex())
+  let entity = BidEntity.load(event.transaction.from.toHex());
 
   // Entities only exist after they have been saved to the store;
   // `null` checks allow to create entities on demand
   if (!entity) {
-    entity = new ExampleEntity(event.transaction.from.toHex())
-
-    // Entity fields can be set using simple assignments
-    entity.count = BigInt.fromI32(0)
+    entity = new BidEntity(event.transaction.from.toHex());
   }
 
-  // BigInt and BigDecimal math are supported
-  entity.count = entity.count + BigInt.fromI32(1)
+  let contract = ProjectY.bind(event.address);
+  let buyerInfo = contract.getBuyerInfo(event.params.bidId);
+  let sellerInfo = contract.getSellerInfo(event.params.entryId);
 
   // Entity fields can be set based on event parameters
-  entity.buyer = event.params.buyer
-  entity.entryId = event.params.entryId
+  entity.buyer = event.params.buyer;
+  entity.entryId = event.params.entryId;
+  entity.bidId = event.params.bidId;
+  entity.contractAddress = sellerInfo.contractAddress;
+  entity.tokenId = sellerInfo.tokenId;
+  entity.isSelected = buyerInfo.isSelected;
 
   // Entities can be written to the store with `.save()`
-  entity.save()
+  entity.save();
 
   // Note: If a handler doesn't require existing field values, it is faster
   // _not_ to load the entity from the store. Instead, create it fresh with
@@ -48,8 +37,6 @@ export function handleBid(event: Bid): void {
   // It is also possible to access smart contracts from mappings. For
   // example, the contract that has emitted the event can be connected to
   // with:
-  //
-  // let contract = Contract.bind(event.address)
   //
   // The following functions can then be called on this contract to access
   // state variables and other data:
@@ -78,23 +65,3 @@ export function handleBid(event: Bid): void {
   // - contract.sell(...)
   // - contract.withdrawSell(...)
 }
-
-export function handleBidSelected(event: BidSelected): void {}
-
-export function handleBidWithdrawn(event: BidWithdrawn): void {}
-
-export function handleBiddingPeriodUpdated(event: BiddingPeriodUpdated): void {}
-
-export function handleGracePeriodUpdated(event: GracePeriodUpdated): void {}
-
-export function handleInstallmentPaid(event: InstallmentPaid): void {}
-
-export function handleLiquidated(event: Liquidated): void {}
-
-export function handleOwnerUpdated(event: OwnerUpdated): void {}
-
-export function handlePaymentWithdrawn(event: PaymentWithdrawn): void {}
-
-export function handleSell(event: Sell): void {}
-
-export function handleSellWithdrawn(event: SellWithdrawn): void {}
